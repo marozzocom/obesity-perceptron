@@ -103,6 +103,8 @@ class Perceptron {
 		epochs: number,
 		learningRate: number,
 	): Promise<void> {
+		const start = performance.now();
+
 		for (let epoch = 0; epoch < epochs; epoch++) {
 			for (const { person, isObese } of trainingSet) {
 				const normalizedInputs = [
@@ -124,6 +126,11 @@ class Perceptron {
 				process.stdout.write(`\rProgress: ${progress.toFixed(2)}%`);
 			}
 		}
+		const duration = performance.now() - start;
+
+		console.log(`\nTraining complete in ${duration.toFixed(2)}ms`);
+
+		// Add a delay to show the training completion message
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		console.log(); // New line after training is complete
 	}
