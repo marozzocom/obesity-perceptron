@@ -220,6 +220,16 @@ const generateTrainingSet = (size: number): Array<PersonWithObesity> =>
 const normalize = (value: number, min: number, max: number): number =>
 	(value - min) / (max - min);
 
+const validateInput = (input: string): boolean => /^\d+(\.\d+)?$/.test(input);
+
+const validateRange = (input: string, min: number, max: number): boolean => {
+	const value = Number.parseFloat(input);
+	return value >= min && value <= max;
+};
+
+const validateInputRange = (input: string, min: number, max: number): boolean =>
+	validateInput(input) && validateRange(input, min, max);
+
 const makePrediction = (
 	perceptron: Perceptron,
 	defaultHeight = DEFAULTS.HEIGHT,
@@ -240,14 +250,20 @@ const makePrediction = (
 	);
 	if (weightInput?.toLowerCase() === EXIT_COMMAND) return [false];
 
-	const height = Number.parseInt(heightInput || defaultHeight);
-	const weight = Number.parseInt(weightInput || defaultWeight);
+	const height = Number.parseFloat(heightInput || defaultHeight);
+	const weight = Number.parseFloat(weightInput || defaultWeight);
 
 	if (
-		height < BMI_CONSTANTS.MIN_HEIGHT ||
-		height > BMI_CONSTANTS.MAX_HEIGHT ||
-		weight < BMI_CONSTANTS.MIN_WEIGHT ||
-		weight > BMI_CONSTANTS.MAX_WEIGHT
+		!validateInputRange(
+			heightInput || defaultHeight,
+			BMI_CONSTANTS.MIN_HEIGHT,
+			BMI_CONSTANTS.MAX_HEIGHT,
+		) ||
+		!validateInputRange(
+			weightInput || defaultWeight,
+			BMI_CONSTANTS.MIN_WEIGHT,
+			BMI_CONSTANTS.MAX_WEIGHT,
+		)
 	) {
 		console.log(
 			colorize(
